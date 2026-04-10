@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vienna & Prague 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500;600&family=Lora:ital,wght@1,400;1,600&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #f4f3f0;
@@ -20,6 +20,10 @@
     --green-bg: #eaf5ef;
     --blue: #1a4a8a;
     --blue-bg: #eaf0fa;
+    --trivia-bg: #faf7f0;
+    --trivia-border: #c8b89a;
+    --trivia-text: #4a3728;
+    --trivia-accent: #8b5e3c;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html { scroll-behavior: smooth; }
@@ -32,6 +36,75 @@
     max-width: 480px;
     margin: 0 auto;
     padding-bottom: 60px;
+  }
+
+  /* TRIVIA CARD - ACCORDION */
+  .trivia-card {
+    margin-bottom: 8px;
+  }
+  .trivia-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--trivia-accent);
+    opacity: 0.75;
+    transition: opacity 0.15s;
+    -webkit-appearance: none;
+  }
+  .trivia-toggle:hover { opacity: 1; }
+  .trivia-toggle::before {
+    content: '';
+    display: inline-block;
+    width: 11px;
+    height: 11px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b5e3c' stroke-width='2'%3E%3Cpath d='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    flex-shrink: 0;
+  }
+  .trivia-toggle .trivia-chevron {
+    font-size: 9px;
+    transition: transform 0.25s;
+    color: var(--trivia-accent);
+    opacity: 0.6;
+  }
+  .trivia-toggle.open .trivia-chevron { transform: rotate(180deg); }
+  .trivia-body-wrap {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.28s ease;
+  }
+  .trivia-body-wrap.open {
+    grid-template-rows: 1fr;
+  }
+  .trivia-body-inner {
+    overflow: hidden;
+  }
+  .trivia-body {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-size: 12.5px;
+    color: var(--trivia-text);
+    line-height: 1.75;
+    background: var(--trivia-bg);
+    border: 1px solid var(--trivia-border);
+    border-left: 3px solid var(--trivia-accent);
+    border-radius: 0 0 8px 8px;
+    padding: 10px 14px;
+    margin-top: 4px;
+  }
+  .trivia-body strong {
+    font-weight: 600;
+    color: #3a2a1e;
   }
 
   /* HEADER */
@@ -282,11 +355,7 @@
     align-items: center;
     gap: 14px;
   }
-  .hotel-icon {
-    font-size: 22px;
-    flex-shrink: 0;
-    line-height: 1;
-  }
+  .hotel-icon { font-size: 22px; flex-shrink: 0; line-height: 1; }
   .hotel-label {
     font-size: 9px;
     font-weight: 700;
@@ -295,27 +364,10 @@
     color: var(--accent);
     margin-bottom: 3px;
   }
-  .hotel-name {
-    font-size: 13px;
-    font-weight: 600;
-    line-height: 1.3;
-    color: var(--black);
-  }
-  .hotel-sub {
-    font-size: 11px;
-    color: var(--mid);
-    font-weight: 400;
-    margin-top: 2px;
-  }
-  .hotel-actions {
-    margin-left: auto;
-    flex-shrink: 0;
-  }
-  .hotel-actions .copy-btn {
-    background: white;
-    border-color: var(--accent-mid);
-    color: var(--accent);
-  }
+  .hotel-name { font-size: 13px; font-weight: 600; line-height: 1.3; color: var(--black); }
+  .hotel-sub { font-size: 11px; color: var(--mid); font-weight: 400; margin-top: 2px; }
+  .hotel-actions { margin-left: auto; flex-shrink: 0; }
+  .hotel-actions .copy-btn { background: white; border-color: var(--accent-mid); color: var(--accent); }
 
   /* TRANSPORT */
   .transport-row {
@@ -355,167 +407,43 @@
     border-radius: 20px 20px 0 0;
     padding: 24px 20px 44px;
   }
-  .modal-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--light);
-    margin-bottom: 8px;
-  }
+  .modal-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--light); margin-bottom: 8px; }
   .modal-text {
-    font-size: 17px;
-    font-weight: 600;
-    color: var(--black);
-    background: var(--bg);
-    border-radius: 10px;
-    padding: 14px 16px;
-    word-break: break-all;
-    margin-bottom: 8px;
-    border: 1px solid var(--border);
-    cursor: text;
-    user-select: all;
-    -webkit-user-select: all;
-    line-height: 1.4;
+    font-size: 17px; font-weight: 600; color: var(--black);
+    background: var(--bg); border-radius: 10px; padding: 14px 16px;
+    word-break: break-all; margin-bottom: 8px; border: 1px solid var(--border);
+    cursor: text; user-select: all; -webkit-user-select: all; line-height: 1.4;
   }
-  .modal-hint {
-    font-size: 11px;
-    color: var(--light);
-    text-align: center;
-    margin-bottom: 16px;
-  }
+  .modal-hint { font-size: 11px; color: var(--light); text-align: center; margin-bottom: 16px; }
   .modal-hint.success { color: var(--green); font-weight: 600; }
   .modal-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .mbtn {
-    padding: 14px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    transition: all 0.15s;
-  }
+  .mbtn { padding: 14px; border-radius: 10px; font-size: 14px; font-weight: 600; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
   .mbtn-copy { background: var(--accent); color: white; }
   .mbtn-copy.done { background: var(--green); }
   .mbtn-close { background: var(--bg); color: var(--mid); border: 1px solid var(--border); }
   .mbtn-map { background: var(--black); color: white; }
-  .modal-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .modal-btns-top { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
 
-
-  /* MAP BUTTON */
-  .map-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--mid);
-    border-radius: 6px;
-    padding: 6px 11px;
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    transition: all 0.15s;
-    -webkit-appearance: none;
-    text-decoration: none;
-  }
-  .map-btn:active { transform: scale(0.97); }
-  .map-btn svg { width: 11px; height: 11px; flex-shrink: 0; }
   /* LOCK SCREEN */
   #lockScreen {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
+    position: fixed; inset: 0; z-index: 9999;
     background: var(--black);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
     padding: 40px 32px;
   }
-  #lockScreen .lock-eyebrow {
-    font-size: 10px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 600;
-    margin-bottom: 12px;
-  }
-  #lockScreen h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 28px;
-    color: white;
-    text-align: center;
-    line-height: 1.2;
-    margin-bottom: 6px;
-  }
-  #lockScreen .lock-sub {
-    font-size: 12px;
-    color: #666;
-    margin-bottom: 40px;
-    text-align: center;
-  }
-  .pin-dots {
-    display: flex;
-    gap: 16px;
-    margin-bottom: 36px;
-  }
-  .pin-dot {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    border: 2px solid #444;
-    background: transparent;
-    transition: all 0.15s;
-  }
-  .pin-dot.filled {
-    background: var(--accent);
-    border-color: var(--accent);
-  }
-  .pin-dot.error {
-    background: #c0392b;
-    border-color: #c0392b;
-  }
-  .pin-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    width: 100%;
-    max-width: 280px;
-  }
-  .pin-btn {
-    background: #1a1a1a;
-    border: 1px solid #2a2a2a;
-    border-radius: 14px;
-    color: white;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 22px;
-    font-weight: 500;
-    padding: 18px 0;
-    cursor: pointer;
-    transition: all 0.1s;
-    -webkit-appearance: none;
-    user-select: none;
-  }
-  .pin-btn:active {
-    background: var(--accent);
-    border-color: var(--accent);
-    transform: scale(0.95);
-  }
+  #lockScreen .lock-eyebrow { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 12px; }
+  #lockScreen h2 { font-family: 'Playfair Display', serif; font-size: 28px; color: white; text-align: center; line-height: 1.2; margin-bottom: 6px; }
+  #lockScreen .lock-sub { font-size: 12px; color: #666; margin-bottom: 40px; text-align: center; }
+  .pin-dots { display: flex; gap: 16px; margin-bottom: 36px; }
+  .pin-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #444; background: transparent; transition: all 0.15s; }
+  .pin-dot.filled { background: var(--accent); border-color: var(--accent); }
+  .pin-dot.error { background: #c0392b; border-color: #c0392b; }
+  .pin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%; max-width: 280px; }
+  .pin-btn { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 14px; color: white; font-family: 'DM Sans', sans-serif; font-size: 22px; font-weight: 500; padding: 18px 0; cursor: pointer; transition: all 0.1s; -webkit-appearance: none; user-select: none; }
+  .pin-btn:active { background: var(--accent); border-color: var(--accent); transform: scale(0.95); }
   .pin-btn.empty { background: transparent; border-color: transparent; pointer-events: none; }
   .pin-btn.del { font-size: 18px; color: #888; }
-  .lock-error {
-    margin-top: 20px;
-    font-size: 12px;
-    color: #c0392b;
-    font-weight: 600;
-    letter-spacing: 1px;
-    height: 18px;
-    text-align: center;
-  }
+  .lock-error { margin-top: 20px; font-size: 12px; color: #c0392b; font-weight: 600; letter-spacing: 1px; height: 18px; text-align: center; }
 </style>
 </head>
 <body>
@@ -576,6 +504,11 @@
     </div>
   </div>
 
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">旅の前に · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">成田空港は1978年開港。実は当初の計画では<strong>「羽田拡張」</strong>の予定だったが、騒音問題で千葉に変更された。そのおかげで空港まで遠い東京の構造が生まれた。</div></div></div>
+  </div>
+
   <div class="hotel-card">
     <div class="hotel-icon">🏨</div>
     <div>
@@ -610,6 +543,11 @@
       <div class="day-title">4月18日（土）</div>
       <div class="day-sub">東京 → ウィーン</div>
     </div>
+  </div>
+
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">フライト · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">オーストリア航空 OS26便はほぼ<strong>シベリア上空</strong>を横断するルート。約14時間のフライト中、ロシア・カザフスタン・ウクライナ上空を通過する。機内モニターで「今どこにいるか」チェックしてみると面白い。</div></div></div>
   </div>
 
   <div class="event-card">
@@ -655,6 +593,11 @@
     </div>
   </div>
 
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">ビーダーマイヤー · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">ホテル名の「ビーダーマイヤー」は19世紀初頭のオーストリア文化様式。ナポレオン戦争後の市民が<strong>政治より家庭の幸福</strong>を求めた時代の雰囲気を表す言葉。簡素で温かみのある家具スタイルとして今も有名。</div></div></div>
+  </div>
+
   <div class="info-card">
     <div class="info-card-title">手荷物情報（往復共通）</div>
     <div class="info-row"><span class="info-label">身の回り品</span><span class="info-value">1個（前の座席下）</span></div>
@@ -688,7 +631,6 @@
     </div>
   </div>
 
-  <!-- 朝食 -->
   <div class="event-card">
     <div class="event-top">
       <div>
@@ -705,7 +647,11 @@
     </div>
   </div>
 
-  <!-- シェーンブルンへ -->
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">ウィーンのカフェ · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">ウィーンのカフェハウス文化は<strong>ユネスコ無形文化遺産</strong>に登録されている（2011年）。伝統的なカフェでは「水とコーヒーを注文して何時間いても追い出されない」のが不文律。新聞も無料で読める。</div></div></div>
+  </div>
+
   <div class="transport-row"><span class="arr">↓</span>地下鉄 U4 · シュヴェーデンプラッツ駅から 9駅（14分）· シェーンブルン駅下車</div>
   <div class="event-note" style="margin-bottom:8px; border-radius:8px; padding:8px 12px; background:#f0f4ff; border-left:3px solid #4a7ad4; font-size:11px; color:#1a4a8a; font-weight:600;">
     💡 駅で2日間チケット（48h）を購入すると便利
@@ -737,6 +683,11 @@
     </div>
   </div>
 
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">シェーンブルン · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">6歳のモーツァルトがここで演奏し、女帝マリア・テレジアの前で転んだとき、<strong>7歳上の王女マリー・アントワネットに「君と結婚したい！」</strong>と言ったという逸話がある。宮殿の部屋数は1441室だが、予算不足でヴェルサイユより小さく建てられた。</div></div></div>
+  </div>
+
   <div class="info-card">
     <div class="info-card-title">シェーンブルン宮殿 チケット詳細</div>
     <div class="info-row"><span class="info-label">ツアー</span><span class="info-value">State Apartments</span></div>
@@ -745,7 +696,6 @@
     <div class="info-row"><span class="info-label">注意</span><span class="info-value">返金・変更不可</span></div>
   </div>
 
-  <!-- カフェ・ザッハへ -->
   <div class="transport-row"><span class="arr">↓</span>見学後 U4 に乗って 6駅（10分）· カールスプラッツ駅下車 出口A</div>
 
   <div class="event-card">
@@ -763,7 +713,11 @@
     </div>
   </div>
 
-  <!-- 散策 -->
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">ザッハトルテ · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">このチョコケーキ、<strong>ホテル・ザッハーとカフェ・デーメルが7年間、裁判でレシピの正統性を争った</strong>（1954〜1963年）。最高裁まで行き、ザッハーが「オリジナル」を名乗る権利を獲得。今も両店で微妙に違う味が楽しめる。</div></div></div>
+  </div>
+
   <div class="transport-row"><span class="arr">↓</span>徒歩で周辺散策しながら</div>
 
   <div class="event-card">
@@ -785,6 +739,11 @@
     </div>
   </div>
 
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">アウグスティーナ教会 · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">この教会の地下には<strong>「心臓の壺」</strong>が54個保管されている。ハプスブルク家の慣習で、遺体は3か所に分けて埋葬された。心臓はここ、遺骨はカイザーグルフト、内臓はシュテファン大聖堂の地下へ。</div></div></div>
+  </div>
+
   <div class="event-card">
     <div class="event-name">シュテファン大聖堂 見学</div>
     <div class="event-actions">
@@ -795,7 +754,11 @@
     </div>
   </div>
 
-  <!-- ショップ -->
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">シュテファン大聖堂 · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">屋根の<strong>モザイクタイルは約230,000枚</strong>で、ハプスブルク家の双頭の鷲とウィーン市の紋章が描かれている。第二次大戦の終戦直前に火災で屋根が崩落し、市民が自発的に再建した。尖塔の高さは137m。</div></div></div>
+  </div>
+
   <div class="event-card">
     <div class="event-top">
       <div>
@@ -818,12 +781,16 @@
       </button>
       <button class="copy-btn" onclick="openCopy('Manner 住所', 'Manner, Stephansplatz 7, 1010 Wien, Austria')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        Manner（ウィーン定番お土産菓子・ウェハース）
+        Manner（定番お土産・ウェハース）
       </button>
     </div>
   </div>
 
-  <!-- フィグルミュラー -->
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">Manner · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">マナーのピンクのウェハース、創業は<strong>1890年</strong>。シュテファン大聖堂のすぐ隣に旗艦店がある。包み紙のピンクはかつては偶然の選択だったが、今やウィーンの代名詞的シンボルカラーに。</div></div></div>
+  </div>
+
   <div class="transport-row"><span class="arr">↓</span>徒歩</div>
 
   <div class="event-card">
@@ -831,7 +798,7 @@
       <div>
         <div class="event-time">16:30 (CEST)</div>
         <div class="event-name">フィグルミュラー・ヴォルツァイレ 夕食</div>
-        <div class="event-detail">ウィーン名物 シュニッツェル · ポテトサラダ（美味しいらしい）· ぶどうジュース</div>
+        <div class="event-detail">ウィーン名物 シュニッツェル · ポテトサラダ · ぶどうジュース</div>
       </div>
       <div class="tags"><span class="tag tag-reserved">予約済</span></div>
     </div>
@@ -843,15 +810,18 @@
     </div>
   </div>
 
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">シュニッツェル · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">「ウィーナー・シュニッツェル」は<strong>仔牛肉</strong>を使うのが正式。豚肉で作ると「シュニッツェル・ウィーナー・アート（ウィーン風）」と呼び分けなければならない法律がある。フィグルミュラーのは皿からはみ出す大きさで有名。</div></div></div>
+  </div>
+
   <div class="transport-row"><span class="arr">↓</span>徒歩 約20分 · 食後ホテルに戻り一旦休憩</div>
 
-  <!-- コンサート -->
   <div class="event-card">
     <div class="event-top">
       <div>
         <div class="event-time">20:00 着 → 20:30 開演</div>
         <div class="event-name">聖ペーター教会 クラシックコンサート</div>
-        <div class="event-detail">ホテル近く ランドシュトラーセ駅（ミッテ駅とつながっている）から地下鉄 U3 で移動 · 歩きも入れて約20分</div>
         <div class="event-detail">カテゴリーⅡ · 大人×2 · ¥17,009 · 予約番号 MWC836057</div>
       </div>
       <div class="tags"><span class="tag tag-reserved">予約済</span></div>
@@ -867,6 +837,11 @@
         住所コピー
       </button>
     </div>
+  </div>
+
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">聖ペーター教会 · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">ウィーン最古の教会のひとつで、建設は<strong>ローマ時代（4世紀）</strong>にさかのぼる。現在の建物は1733年完成のバロック様式。モーツァルトもここで演奏したと伝えられる。小さいのに内部は金で埋め尽くされた圧巻の空間。</div></div></div>
   </div>
 </section>
 
@@ -895,14 +870,12 @@
     </div>
   </div>
 
-  <!-- 朝食 パルメンハウス -->
   <div class="event-card">
     <div class="event-top">
       <div>
         <div class="event-time">朝食 · 10:00〜（早めに行く）</div>
         <div class="event-name">パルメンハウス 🌿</div>
         <div class="event-detail">元・王宮の植物園 · ホーフブルク宮殿から隣接 · 広い空間に観葉植物がいっぱい</div>
-        <div class="event-detail">ホテルから徒歩7分 → U4 Landstraße駅から2駅 → カールスプラッツ下車 → 徒歩10分</div>
       </div>
     </div>
     <div class="event-actions">
@@ -913,20 +886,11 @@
     </div>
   </div>
 
-  <!-- シール：木 -->
-  <div style="text-align:right; margin: -4px 8px 4px; opacity:0.85; pointer-events:none; user-select:none;">
-    <svg width="44" height="52" viewBox="0 0 44 52" fill="none">
-      <ellipse cx="22" cy="26" rx="18" ry="20" fill="#a8d8a8" opacity="0.9"/>
-      <ellipse cx="22" cy="20" rx="13" ry="15" fill="#7bc87b"/>
-      <ellipse cx="16" cy="24" rx="9" ry="10" fill="#a8d8a8" opacity="0.7"/>
-      <ellipse cx="28" cy="22" rx="8" ry="9" fill="#6db86d" opacity="0.8"/>
-      <circle cx="14" cy="18" r="3" fill="#b8e8b8" opacity="0.6"/>
-      <circle cx="29" cy="16" r="2.5" fill="#5caa5c" opacity="0.7"/>
-      <rect x="20" y="40" width="4" height="10" rx="2" fill="#8B6914"/>
-    </svg>
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">ブルガルテン · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">パルメンハウス前の庭園にはモーツァルト像がある。実はウィーンにあるのに<strong>モーツァルトはザルツブルク出身</strong>で、ウィーンでは生前あまり評価されず、貧しいまま35歳で死去した。像が建てられたのは死後60年以上経ってから。</div></div></div>
   </div>
 
-  <!-- ホーフブルク -->
   <div class="transport-row"><span class="arr">↓</span>ホーフブルク宮殿 庭園を散歩</div>
 
   <div class="event-card">
@@ -940,7 +904,11 @@
     </div>
   </div>
 
-  <!-- トラムでベルヴェデーレへ -->
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">ホーフブルク · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">ホーフブルクは600年以上かけて増築され続けた結果、<strong>2,600以上の部屋</strong>を持つ巨大複合施設になった。現在もオーストリア大統領官邸として使われている。皇妃エリザベート（シシィ）はここの生活が嫌で逃げ回り、年間300日以上旅をしていた。</div></div></div>
+  </div>
+
   <div class="transport-row"><span class="arr">↓</span>トラム D · Burgring から 5駅 · Schloss Belvedere 下車 · 徒歩 3分</div>
 
   <div class="event-card">
@@ -948,12 +916,11 @@
       <div>
         <div class="event-time">13:40 頃には到着 · 14:00 入場</div>
         <div class="event-name">ベルヴェデーレ宮殿（上宮）✨</div>
-        <div class="event-detail">クリムト「接吻」など永久コレクション · 上宮1Fにカフェあり · デジタルチケット</div>
-        <div class="event-detail">Reference ID：1456953639</div>
+        <div class="event-detail">クリムト「接吻」など永久コレクション · 上宮1Fにカフェあり · Reference ID：1456953639</div>
       </div>
       <div class="tags"><span class="tag tag-reserved">予約済</span></div>
     </div>
-    <div class="event-note">⚠ 13:40 位には行く！上宮1Fにカフェあり · 変更・日程変更は不可</div>
+    <div class="event-note">⚠ 13:40 位には行く！変更・日程変更は不可</div>
     <div class="event-actions">
       <button class="copy-btn" onclick="window.open('https://drive.google.com/file/d/1_KhVRzcCVt5EkGC7BC7ZhlPuZdz6r-Mm/view?usp=sharing','_blank')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
@@ -970,21 +937,16 @@
     </div>
   </div>
 
-  <!-- シール：キラキラ -->
-  <div style="text-align:left; margin: -2px 12px 4px; opacity:0.9; pointer-events:none; user-select:none;">
-    <svg width="48" height="36" viewBox="0 0 48 36">
-      <polygon points="24,2 26,14 38,12 28,20 34,32 24,24 14,32 20,20 10,12 22,14" fill="#f9d94e" opacity="0.95"/>
-      <polygon points="10,4 11,10 17,9 12,13 15,19 10,15 5,19 8,13 3,9 9,10" fill="#ffeaa0" opacity="0.8"/>
-      <polygon points="40,0 41,6 47,5 42,9 45,15 40,11 35,15 38,9 33,5 39,6" fill="#ffe066" opacity="0.75"/>
-    </svg>
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">クリムト「接吻」· 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">クリムトの「接吻」（1908年）は完成した年に<strong>オーストリア政府が即座に買い取った</strong>。金箔を多用した「黄金様式」の代表作で、現在の保険評価額は数百億円とも言われる。モデルはクリムトの長年のパートナー、エミーリエ・フレーゲとされている。</div></div></div>
   </div>
 
   <div class="info-card">
-    <div class="info-card-title">ベルヴェデーレ チケット詳細 (Tiqets)</div>
+    <div class="info-card-title">ベルヴェデーレ チケット詳細</div>
     <div class="info-row"><span class="info-label">Reference ID</span><span class="info-value">1456953639</span></div>
     <div class="info-row"><span class="info-label">入場日時</span><span class="info-value">4/20（月）14:00</span></div>
     <div class="info-row"><span class="info-label">到着目安</span><span class="info-value">13:40〜13:50（早めに）</span></div>
-    <div class="info-row"><span class="info-label">チケット</span><span class="info-value">デジタル・印刷不要</span></div>
     <div class="info-row"><span class="info-label">注意</span><span class="info-value">スーツケース持込不可 · 変更不可</span></div>
     <div class="info-row"><span class="info-label">アクセス</span><span class="info-value">トラムD「Schloss Belvedere」駅</span></div>
   </div>
@@ -1006,11 +968,16 @@
     </div>
   </div>
 
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">ヴォティーフ教会 · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">1853年、皇帝フランツ・ヨーゼフ1世が暗殺未遂を生き延びたことへの感謝として建設が命じられた。<strong>「誓願（ヴォートゥム）」の教会</strong>という意味。ゴシック・リヴァイヴァル様式で、完成まで実に30年かかった。</div></div></div>
+  </div>
+
   <div class="event-card">
     <div class="event-top">
       <div>
         <div class="event-name">夕食 · Zum Leupold</div>
-        <div class="event-detail">オーストリア料理 · グラーシュスープ（ビーフシチュー）が美味しい · ワンちゃん OK レストラン</div>
+        <div class="event-detail">オーストリア料理 · グラーシュスープ · ワンちゃん OK</div>
       </div>
     </div>
     <div class="event-actions">
@@ -1021,17 +988,9 @@
     </div>
   </div>
 
-  <!-- シール：カフェ看板 -->
-  <div style="text-align:right; margin: 4px 16px 0; opacity:0.85; pointer-events:none; user-select:none;">
-    <svg width="38" height="48" viewBox="0 0 38 48">
-      <rect x="4" y="2" width="30" height="28" rx="4" fill="#2d6a2d"/>
-      <rect x="7" y="5" width="24" height="22" rx="3" fill="#3a8a3a"/>
-      <text x="19" y="14" text-anchor="middle" font-size="6" fill="white" font-weight="bold">CAFE</text>
-      <path d="M12 20 Q19 25 26 20" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-      <ellipse cx="19" cy="19" rx="5" ry="4" fill="none" stroke="white" stroke-width="1.2"/>
-      <rect x="17" y="30" width="4" height="14" rx="1" fill="#5a3a1a"/>
-      <rect x="10" y="42" width="18" height="4" rx="2" fill="#4a2e10"/>
-    </svg>
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">グラーシュ · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">グラーシュはもともと<strong>ハンガリー料理</strong>。ハプスブルク帝国がハンガリーを支配していた時代にウィーンに伝わり、今やオーストリアの国民食になった。スープ版（ゴラーシュズッペ）とシチュー版がある。</div></div></div>
   </div>
 </section>
 
@@ -1072,13 +1031,18 @@
       </button>
       <button class="copy-btn" onclick="openCopy('出発駅 住所', 'Wien Hauptbahnhof, Wiedner Gürtel 1, 1100 Wien, Austria')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        出発駅 住所
+        出発駅
       </button>
       <button class="copy-btn" onclick="openCopy('到着駅 住所', 'Praha hlavní nádraží, Wilsonova 300/8, 120 00 Praha 2, Czech Republic')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        到着駅 住所
+        到着駅
       </button>
     </div>
+  </div>
+
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">ウィーン→プラハ · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">この2都市は約250kmしか離れていない。かつてハプスブルク帝国では<strong>同じ国の2大都市</strong>だったが、1918年の帝国崩壊で別の国になった。今もチェコ語とドイツ語で書かれた看板が国境周辺に残っている。</div></div></div>
   </div>
 
   <div class="info-card">
@@ -1105,6 +1069,11 @@
     </div>
   </div>
 
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">ホテル ロット · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">ホテルが建つマレー広場（Malé náměstí）は<strong>プラハ最古の広場のひとつ</strong>で、中世の薬局や商業施設が並んでいた場所。広場中央の噴水は1560年代のもの。旧市街広場まで徒歩1分という立地。</div></div></div>
+  </div>
+
   <div class="event-note" style="margin-bottom:8px; border-radius:8px; padding:8px 12px; background:#f0f4ff; border-left:3px solid #4a7ad4; font-size:11px; color:#1a4a8a; font-weight:600;">
     ⚠️ 駅前のタクシーはボッタクリ注意！駅前の公園を抜けてオペラロヴァ通りで配車アプリを使うこと
   </div>
@@ -1119,11 +1088,16 @@
     </div>
   </div>
 
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">カレル橋 · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">カレル橋は1357年7月9日5時31分に着工が始まった。これは<strong>1-3-5-7-9-7-5-3-1</strong>という回文数になっており、縁起を担いで皇帝カレル4世自身がこの日時を選んだ。30体の聖人像が並ぶ橋の上は、朝7時前が一番空いていてきれい。</div></div></div>
+  </div>
+
   <div class="event-card">
     <div class="event-top">
       <div>
         <div class="event-name">Restaurant U zlatých nuzek</div>
-        <div class="event-detail">チェコ料理レストラン · 早めの夕食 · 食後は散歩</div>
+        <div class="event-detail">チェコ料理レストラン · 早めの夕食</div>
       </div>
     </div>
     <div class="event-actions">
@@ -1185,6 +1159,11 @@
     </div>
   </div>
 
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">プラハ城 · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">プラハ城はギネスブック認定の<strong>世界最大の城郭（約70,000㎡）</strong>。城というより「城壁の中に街がある」感覚で、大聖堂・宮殿・修道院・庭園・黄金の小路がすべて壁の中に入っている。チェコ大統領の執務室も今もここにある。</div></div></div>
+  </div>
+
   <div class="info-card">
     <div class="info-card-title">プラハ城チケット詳細 (GetYourGuide)</div>
     <div class="info-row"><span class="info-label">予約番号</span><span class="info-value">GYGG45Y4X43L</span></div>
@@ -1199,7 +1178,7 @@
     <div class="event-top">
       <div>
         <div class="event-name">Memory Restaurant</div>
-        <div class="event-detail">ベトナム料理 · フォーの店 · そろそろアジアンフードが恋しい？</div>
+        <div class="event-detail">ベトナム料理 · フォーの店</div>
       </div>
     </div>
     <div class="event-actions">
@@ -1208,6 +1187,11 @@
         住所コピー
       </button>
     </div>
+  </div>
+
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">プラハとベトナム · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">チェコにはベトナム人コミュニティが多い。これは共産主義時代に<strong>ベトナムからの労働者・留学生</strong>を受け入れた歴史の名残。チェコのベトナム料理店は本格的と評判で、地元民にも人気。</div></div></div>
   </div>
 
   <div class="event-card">
@@ -1225,11 +1209,16 @@
     </div>
   </div>
 
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">ハヴェル市場 · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">13世紀から続く市場。名前の「ハヴェル」は聖ガルスのチェコ語名（Havel）から来ており、ビロード革命のヴァーツラフ・ハヴェル大統領とは無関係。ただしハヴェル大統領の名前もここからきていると言われている。</div></div></div>
+  </div>
+
   <div class="event-card">
     <div class="event-top">
       <div>
         <div class="event-name">旧市街 ショッピング・散策</div>
-        <div class="event-detail">マニファクトゥーラ（チェコ発ナチュラルコスメ・雑貨・キッチンなど）</div>
+        <div class="event-detail">マニファクトゥーラ（チェコ発ナチュラルコスメ・雑貨）</div>
       </div>
     </div>
     <div class="event-actions">
@@ -1239,8 +1228,6 @@
       </button>
     </div>
   </div>
-
-  <div class="transport-row"><span class="arr">↓</span>ホテルに戻り休憩</div>
 
   <div class="event-card">
     <div class="event-top">
@@ -1257,11 +1244,16 @@
     </div>
   </div>
 
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">カフカとプラハ · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">フランツ・カフカはプラハ生まれだが、<strong>ドイツ語で書いたユダヤ系チェコ人</strong>という3つのアイデンティティを抱えていた。「変身」の主人公が突然虫になる疎外感は、どこにも完全には属せない彼自身の感覚から生まれたとされる。</div></div></div>
+  </div>
+
   <div class="event-card">
     <div class="event-top">
       <div>
         <div class="event-name">レストラン ムレイニツェ（MLEJNICE）</div>
-        <div class="event-detail">夕食候補 · パンに入ったグヤーシュが美しくて有名 · 人気店なので予約するか要検討</div>
+        <div class="event-detail">夕食候補 · パンに入ったグヤーシュが美しくて有名</div>
       </div>
     </div>
     <div class="event-note">💡 疲れていたら無理せず別の店でも OK</div>
@@ -1280,7 +1272,7 @@
     <div class="day-num">Day 6</div>
     <div>
       <div class="day-title">4月23日（木）</div>
-      <div class="day-sub">チェスキー・クルムロフ日帰り 🏰 世界遺産の街</div>
+      <div class="day-sub">チェスキー・クルムロフ 🏰 世界遺産</div>
     </div>
   </div>
   <div class="city-badge"><span class="city-dot"></span>Český Krumlov, Czech Republic</div>
@@ -1289,29 +1281,9 @@
     💳 この街はカード使えず！！現金のみ
   </div>
 
-  <div class="hotel-card">
-    <div class="hotel-icon">🏨</div>
-    <div>
-      <div class="hotel-label">滞在中 (4/21〜4/25)</div>
-      <div class="hotel-name">ホテル ロット（プラハ泊）</div>
-    </div>
-  </div>
-
-  <div class="event-card">
-    <div class="event-top">
-      <div>
-        <div class="event-time">8:00 出発</div>
-        <div class="event-name">ホテル → 地下鉄B線 ムーステク駅</div>
-        <div class="event-detail">ホテルから徒歩8分 · ムーステク駅（進行方向①番）· 3駅乗車 → Andělアンジェル駅下車</div>
-        <div class="event-detail">進行方向側の階段から地上へ → 地上に出るとバス停あり</div>
-      </div>
-    </div>
-    <div class="event-actions">
-      <button class="copy-btn" onclick="openCopy('ムーステク駅 住所', 'Můstek Metro Station, Václavské náměstí, 110 00 Praha 1, Czech Republic')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        ムーステク駅
-      </button>
-    </div>
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">チェスキー・クルムロフ · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">人口わずか<strong>13,000人の小さな街</strong>が世界遺産。ヴルタヴァ川（モルダウ川の源流）が蛇行してほぼ島のような地形を作っており、中世の街並みがそのまま残った。かつてエゴン・シーレがここに住み、地元の少女たちをモデルに絵を描いたことで住民から追い出された逸話も。</div></div></div>
   </div>
 
   <div class="event-card">
@@ -1319,8 +1291,7 @@
       <div>
         <div class="event-time">8:00 → 10:35</div>
         <div class="event-name">Na Knížecí バス停 出発</div>
-        <div class="event-detail">RegioJet バス · 座席 23 & 24番 · CZK 438</div>
-        <div class="event-detail">⚠ バス車内はお菓子・パン禁止 · 飲み物・ヨーグルトはOK</div>
+        <div class="event-detail">RegioJet バス · 座席 23 & 24番 · ⚠ バス車内はお菓子・パン禁止</div>
       </div>
       <div class="tags">
         <span class="tag tag-train">🚌 バス</span>
@@ -1342,8 +1313,6 @@
   <div class="event-note" style="margin:8px 0; border-radius:8px; padding:8px 12px; background:var(--accent-light); border-left:3px solid var(--accent); font-size:11px; color:var(--accent); font-weight:600;">
     🚌 降車バス停は「Český Krumlov Špičák」← 終点の1つ手前・城に近い！ここで降りる
   </div>
-
-  <div class="transport-row"><span class="arr">↓</span>約2時間35分</div>
 
   <div class="event-card">
     <div class="event-top">
@@ -1367,7 +1336,7 @@
     <div class="event-top">
       <div>
         <div class="event-name">チェスキー・クルムロフ城</div>
-        <div class="event-detail">塔に登るのとミュージアムのセットチケットあり · 予約は必要なさそう</div>
+        <div class="event-detail">塔に登るのとミュージアムのセットチケットあり</div>
       </div>
     </div>
     <div class="event-actions">
@@ -1376,6 +1345,11 @@
         住所コピー
       </button>
     </div>
+  </div>
+
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">クルムロフ城 · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">この城の塔は<strong>熊の堀</strong>で有名。中世から実際にクマが飼育されており、今も生きたクマが住んでいる。敵を威嚇するためという説と、単に貴族の趣味という説がある。城内のバロック劇場は世界で最もよく保存された劇場のひとつ。</div></div></div>
   </div>
 
   <div class="event-card">
@@ -1425,8 +1399,7 @@
       <div>
         <div class="event-time">18:45 プラハ着後</div>
         <div class="event-name">地下鉄でホテルへ · 夕食は軽めに</div>
-        <div class="event-detail">ムーステク駅近くのスーパーで夕食（フルーツ・サラダなど）· 日本から持参したものも活用</div>
-        <div class="event-detail">ホテルに戻ってこの夜はまったり部屋で過ごす</div>
+        <div class="event-detail">ムーステク駅近くのスーパーで夕食 · この夜はまったり</div>
       </div>
     </div>
     <div class="event-actions">
@@ -1438,6 +1411,7 @@
   </div>
 </section>
 
+<!-- APR 24 -->
 <section class="day-section" id="d24">
   <div class="day-header">
     <div class="day-num">Day 7</div>
@@ -1462,7 +1436,6 @@
     </div>
   </div>
 
-  <!-- 朝食後 旧市街散策 -->
   <div class="event-card">
     <div class="event-top">
       <div>
@@ -1477,6 +1450,31 @@
         住所コピー
       </button>
     </div>
+  </div>
+
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">ティーン教会 · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">2本の尖塔は高さが微妙に違う。伝説では<strong>男性側（右）が女性側（左）より少し高い</strong>とされ、「雄と雌の塔」と呼ばれる。内部にはデンマークの天文学者ティコ・ブラーエの墓がある。ケプラーの師匠で、火星の軌道データをケプラーに遺した人物。</div></div></div>
+  </div>
+
+  <div class="event-card">
+    <div class="event-top">
+      <div>
+        <div class="event-name">旧市街天文時計（オルロイ）</div>
+        <div class="event-detail">毎正時に「死の行進」の人形が動く · 必見！</div>
+      </div>
+    </div>
+    <div class="event-actions">
+      <button class="copy-btn" onclick="openCopy('天文時計 住所', 'Prague Orloj, Staroměstské nám. 1, 110 00 Praha 1, Czech Republic')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        住所コピー
+      </button>
+    </div>
+  </div>
+
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">天文時計 オルロイ · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">1410年製。毎正時の人形劇で有名だが、<strong>制作者ハヌシュの目を潰して同じものを作れないようにした</strong>という伝説がある（真偽不明）。3つの文字盤は時刻・月の満ち欠け・黄道12宮を同時に表示する超精密機械。</div></div></div>
   </div>
 
   <div class="event-card">
@@ -1497,22 +1495,6 @@
   <div class="event-card">
     <div class="event-top">
       <div>
-        <div class="event-name">ゴレツ・キンスキー城（国立美術館）</div>
-        <div class="event-detail">ロココ建築 · 内部は国立美術館 · 近くに BOTANICUS あり</div>
-      </div>
-    </div>
-    <div class="event-actions">
-      <button class="copy-btn" onclick="openCopy('キンスキー宮殿 住所', 'Kinský Palace, Staroměstské nám. 606/12, 110 00 Praha 1, Czech Republic')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        住所コピー
-      </button>
-    </div>
-  </div>
-
-  <!-- 市民会館 -->
-  <div class="event-card">
-    <div class="event-top">
-      <div>
         <div class="event-name">市民会館 見学</div>
         <div class="event-detail">その後 併設カフェ「カヴァールナ・オベツニー・ドゥーム」へ</div>
       </div>
@@ -1525,9 +1507,13 @@
     </div>
   </div>
 
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">市民会館 · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">1912年完成のアール・ヌーヴォーの傑作。1918年10月28日、<strong>チェコスロバキア独立宣言が読み上げられた場所</strong>がまさにこの建物。アルフォンス・ミュシャなどチェコの著名芸術家が内装を手がけた。カフェの天井画も必見。</div></div></div>
+  </div>
+
   <div class="transport-row"><span class="arr">↓</span>徒歩 散策しながら</div>
 
-  <!-- トゥルデルニーク -->
   <div class="event-card">
     <div class="event-top">
       <div>
@@ -1543,14 +1529,9 @@
     </div>
   </div>
 
-  <!-- ショッピング -->
-  <div class="event-card">
-    <div class="event-top">
-      <div>
-        <div class="event-name">街ブラ・ショッピング</div>
-        <div class="event-detail">お腹空いたら適当に</div>
-      </div>
-    </div>
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">トゥルデルニーク · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">観光客に「チェコの伝統菓子」として売られているが、実は<strong>スロバキア・ハンガリー起源</strong>の菓子で、プラハでは20年ほど前から広まった比較的新しい「観光用名物」。本場チェコ人からは「あれはチェコ料理じゃない」と言われることも。でも美味しい。</div></div></div>
   </div>
 
   <div class="event-card">
@@ -1562,6 +1543,21 @@
     </div>
     <div class="event-actions">
       <button class="copy-btn" onclick="openCopy('Manufaktura 住所', 'Manufaktura, Melantrichova 970/17, 110 00 Praha 1, Czech Republic')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        住所コピー
+      </button>
+    </div>
+  </div>
+
+  <div class="event-card">
+    <div class="event-top">
+      <div>
+        <div class="event-name">BOTANICUS</div>
+        <div class="event-detail">オーガニックコスメ・石けん</div>
+      </div>
+    </div>
+    <div class="event-actions">
+      <button class="copy-btn" onclick="openCopy('BOTANICUS 住所', 'Botanicus, Týn 3, 110 00 Praha 1, Czech Republic')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
         住所コピー
       </button>
@@ -1586,22 +1582,6 @@
   <div class="event-card">
     <div class="event-top">
       <div>
-        <div class="event-name">BOTANICUS</div>
-        <div class="event-detail">オーガニックコスメ・石けん</div>
-      </div>
-    </div>
-    <div class="event-actions">
-      <button class="copy-btn" onclick="openCopy('BOTANICUS 住所', 'Botanicus, Týn 3, 110 00 Praha 1, Czech Republic')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        住所コピー
-      </button>
-    </div>
-  </div>
-
-  <!-- 夕食 -->
-  <div class="event-card">
-    <div class="event-top">
-      <div>
         <div class="event-time">17:30 (CEST)</div>
         <div class="event-name">Bella Vida Café</div>
         <div class="event-detail">先輩おすすめ · カレル橋そば · モルダウ川ビュー · 2名</div>
@@ -1614,6 +1594,11 @@
         住所コピー
       </button>
     </div>
+  </div>
+
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">モルダウ川 · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">チェコ語では「ヴルタヴァ川」。「モルダウ」はドイツ語名。チェコの国民的作曲家スメタナが<strong>失聴後に耳が聞こえない状態で作曲した</strong>交響詩「モルダウ」で世界的に有名になった。川のほとりで聴くと格別。</div></div></div>
   </div>
 </section>
 
@@ -1633,6 +1618,11 @@
       <div class="hotel-label">チェックアウト</div>
       <div class="hotel-name">ホテル ロット</div>
     </div>
+  </div>
+
+  <div class="trivia-card">
+    <button class="trivia-toggle" onclick="toggleTrivia(this)" aria-expanded="false">帰路 · 雑学<span class="trivia-chevron">▼</span></button>
+    <div class="trivia-body-wrap"><div class="trivia-body-inner"><div class="trivia-body">スイス航空（Swiss）はスイスの国民的プライドの象徴。スイスエアが2002年に経営破綻した後、<strong>わずか半年で再建</strong>されたのがSwiss。現在はルフトハンザ傘下だが、スイスらしい几帳面さとサービスは健在。チューリッヒ乗継は乗り換え時間があれば空港ショッピングが充実。</div></div></div>
   </div>
 
   <div class="event-card">
@@ -1667,7 +1657,7 @@
     <div class="info-card-title">復路フライト</div>
     <div class="info-row"><span class="info-label">便名</span><span class="info-value">Swiss LX1485 → LX160</span></div>
     <div class="info-row"><span class="info-label">ルート</span><span class="info-value">PRG → ZRH → NRT</span></div>
-    <div class="info-row"><span class="info-label">到着</span><span class="info-value">4/26(日) 09:10 成田</span></div>
+    <div class="info-row"><span class="info-value" style="color:#1a7a4a; font-size:12px; padding:10px 16px; text-align:center; width:100%">✈ 旅の思い出をたくさん持ち帰ってね！</span></div>
   </div>
 </section>
 
@@ -1694,6 +1684,14 @@
   var CORRECT = '8777';
   var currentText = '';
 
+
+  function toggleTrivia(btn) {
+    var wrap = btn.nextElementSibling;
+    var isOpen = wrap.classList.contains('open');
+    wrap.classList.toggle('open', !isOpen);
+    btn.classList.toggle('open', !isOpen);
+    btn.setAttribute('aria-expanded', !isOpen);
+  }
   function doOpenMap() {
     if (!currentText) return;
     var encoded = encodeURIComponent(currentText);
@@ -1738,7 +1736,6 @@
     }
   }
 
-  // ── NAV: smooth scroll without URL change + active highlight ──
   var navLinks = document.querySelectorAll('#dateNav a');
   var sections = ['d17','d18','d19','d20','d21','d22','d23','d24','d25'].map(function(id){ return document.getElementById(id); });
 
@@ -1757,14 +1754,12 @@
     navLinks.forEach(function(l) {
       l.classList.toggle('active', l.getAttribute('data-target') === id);
     });
-    // scroll active tab into view inside nav
     var activeLink = document.querySelector('#dateNav a.active');
     if (activeLink) {
       activeLink.scrollIntoView({ inline: 'nearest', block: 'nearest' });
     }
   }
 
-  // IntersectionObserver: fire when section top crosses nav bottom
   var navHeight = document.getElementById('dateNav').offsetHeight;
   var observer = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) {
@@ -1775,11 +1770,8 @@
     threshold: 0
   });
   sections.forEach(function(s){ if(s) observer.observe(s); });
-
-  // init first active
   setActive('d17');
 
-  // ── COPY ──
   function openCopy(label, text) {
     currentText = text;
     document.getElementById('modalLabel').textContent = label;
@@ -1810,7 +1802,6 @@
   }
 
   function doCopy() {
-    // Try modern clipboard API
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(currentText).then(function() {
         showSuccess();
@@ -1823,18 +1814,11 @@
   }
 
   function fallbackCopy() {
-    // Select text and try execCommand
     selectAll();
     try {
       var ok = document.execCommand('copy');
-      if (ok) {
-        showSuccess();
-      } else {
-        showManual();
-      }
-    } catch(e) {
-      showManual();
-    }
+      if (ok) { showSuccess(); } else { showManual(); }
+    } catch(e) { showManual(); }
   }
 
   function showSuccess() {
